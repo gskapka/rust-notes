@@ -14,8 +14,8 @@
 
 * Variables are _immutable_ by default unless you specificy _mut_ infront of a let. 
 
-* Non _mut_ lets may be shadowed in order to change them, but each time the _let_ keyword needs to be used, else compiler error. The docs give an examplegit@github.com:gskapka/rust-notes.git of shadowing of a way to reuse the same name but changing the type. Seems a bit redundant though I guess it keeps the namespace smaller & stops a multitude of intermediate variable? Will keep an eye out for better uses for shadowing.
-git@github.com:gskapka/rust-notes.gitgit@github.com:gskapka/rust-notes.git
+* Non _mut_ lets may be shadowed in order to change them, but each time the _let_ keyword needs to be used, else compiler error. The docs give an example of shadowing of a way to reuse the same name but changing the type. Seems a bit redundant though I guess it keeps the namespace smaller & stops a multitude of intermediate variable? Will keep an eye out for better uses for shadowing.
+
 * _Constants_ actually are immutable. Use _CAPS\_CASE_ naming for them. 
 
 * _Tuples_ can take any types. Can be accessed by destructuring or like __JS__'s object's dot notation, using an index. Indices start at zero.
@@ -34,10 +34,18 @@ git@github.com:gskapka/rust-notes.gitgit@github.com:gskapka/rust-notes.git
 
 * Something like `let x = (let y = 6)` won't set both `x` and `y` to 6, because `let y = 6` is a _statement_, not an _expression_ & ∴ returns nothing.
 
-* Fn returns are defined in the fn statement using an `->` arrow:
+* Fn returns are defined in the fn statement using an `->` arrow. Note the lack of colon after `5`:
 
-  ```
+  ````
     fn five() -> i32 {
       5
     }
   ```
+* In the following example, if a colon is added after the _expression_ inside the block, it becomes a _statement_ and so nothing is returned, meaning the fn declaration (which defines a return) is now _wrong_, and so it won't compile:
+
+  ```
+  fn add_five(x: i32) -> i32 {
+    x + 5
+  }
+  ```
+
