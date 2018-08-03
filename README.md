@@ -10,6 +10,16 @@
 
 ### __Notes on the language__
 
-* _Tuples_ can take any types. Can be accessed by destructuring or like __JS__'s object notation.
+* _Colons_ go after statements ala Solidity. Urgh.
 
-* _Arrays_ are _fixed-length_ always. Must be known at compile time. Cannot grow or shrink! Useful if you want data allocated on the _stack_ rather than the _heap_.
+* Variables are _immutable_ by default unless you specificy _mut_ infront of a let. 
+
+* Non _mut_ lets may be shadowed in order to change them, but each time the _let_ keyword needs to be used, else compiler error. The docs give an example of shadowing of a way to reuse the same name but changing the type. Seems a bit redundant though I guess it keeps the namespace smaller & stops a multitude of intermediate variable? Will keep an eye out for better uses for shadowing.
+
+* _Constants_ actually are immutable. Use _CAPS\_CASE_ naming for them. 
+
+* _Tuples_ can take any types. Can be accessed by destructuring or like __JS__'s object's dot notation, using an index. Indices start at zero.
+
+* _Arrays_ are _fixed-length_ always. Must be known at compile time. Cannot grow or shrink! Useful if you want data allocated on the _stack_ rather than the _heap_. Accessing a non-existing array element _will_ compile but will _panic_ at run time instead of accessing random bits of the program's memory.
+
+* _Vectors_ are like arrays but are _not_ fixed length!
