@@ -48,4 +48,24 @@
     x + 5
   }
   ```
+* Can use an `if` in a `let` thusly:
 
+  ```
+  let number = if condition {
+    1
+  } else {
+    2
+  };
+  ```
+
+* Loop through array with `for / in`: 
+  
+  ```
+  fn main() {
+    let arr = [1,2,3,4,5];
+    for element in arr.iter() {
+      println!("The value is: {}", element);
+    }
+  }
+  ```
+* There are _no_ true ternaries in Rust :( Can do something like `return if value == 5 { success } else { failure }` though. 
