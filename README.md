@@ -1,33 +1,5 @@
 # Rust Cheat-Sheet
 
-&nbsp;
-
-***
-
-&nbsp;
-
-***
-
-### __Notes on the language__
-
-* _Colons_ go after statements ala Solidity. Urgh.
-
-* Variables are _immutable_ by default unless you specificy _mut_ infront of a let. 
-
-* Non _mut_ lets may be shadowed in order to change them, but each time the _let_ keyword needs to be used, else compiler error. The docs give an example of shadowing of a way to reuse the same name but changing the type. Seems a bit redundant though I guess it keeps the namespace smaller & stops a multitude of intermediate variable? Will keep an eye out for better uses for shadowing.
-
-* _Constants_ actually are immutable. Use _CAPS\_CASE_ naming for them. 
-
-* _Tuples_ can take any types. Can be accessed by destructuring or like __JS__'s object's dot notation, using an index. Indices start at zero.
-
-* _Arrays_ are _fixed-length_ always. Must be known at compile time. Cannot grow or shrink! Useful if you want data allocated on the _stack_ rather than the _heap_. Accessing a non-existing array element _will_ compile but will _panic_ at run time instead of accessing random bits of the program's memory.
-
-* _Vectors_ are like arrays but are _not_ fixed length!
-
-* Functions defined with _fn_. Unlike in JS when using _const_ to define a func, Rust doesn't care about definition order. 
-
-* Fn naming uses _snake\_casing_.
-
 * Format for printing: `println!("Curly braces are where x is interpolated: {}", x);`
 
 * Fn parameters are declared with their types: `fn something(x: i32) { ...`, here for eg as an 32-bit integer.
@@ -254,3 +226,44 @@ Instead of copying the memory alloc. details to s2, Rust just makes s1 invalid a
 ```
 
 * Above can be fixed by returning just `s` & altering the func. sig. to `fn dangle() -> String {`. Easy!
+
+* Slice types do not have ownership. Lets you reference a _slice_ of a contiguous sequence of elements in a collection instead of the whole thing. Use slices to get first word of a string:
+
+```rust
+  fn main() {
+    fn first_word(s: &String) -> usize {
+      let bytes = s.as_bytes();                   // convert string to bytes
+      for(i, &item) in bytes.iter().enumerate() { // iterate over the bytes. Enumerate returns tuple of
+                                                  // index & element, the if destructures it.
+        if item == b' ' {                         // 'byte literal' syntax  to search for the bytes that represent ' '
+          return i;
+        }
+      }
+      s.len()
+    } 
+  }
+```
+
+* The issue with the above is we return an index that points to the first word in the string. What if we drop string? We're stuck. How to return the _actual first word?_ Slices!: 
+
+```rust
+  let s = String::from("Hello world");
+  let hello = &s[0..5];
+  let world = &s[6..11];
+```
+* The `[]` hold the starting index and the ending index, separated by `..`. Can drop first num. if index is 0: `[..5]`. If you want to go to end of string, you can drop the last index: `[6..]`. So `[0..len]` === `[..]`. So now lets return the actual slice of the word:
+
+```rust
+  fn main() {
+    fn first_word() -> &str {
+      let bytes = s.as_bytes();
+      for (i, &item) in bytes.iter().enumerate() {
+        it item == b' ' {
+          return &s[0..i]
+        }
+      }
+      &s[..]
+    }
+  }
+```
+* Better still, change the func. sig. to `fn first_word(s: &str) -> &str {` so now it can accept both `String` & slices of strings. 
