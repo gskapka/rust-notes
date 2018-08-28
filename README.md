@@ -1,6 +1,6 @@
 # Rust Cheat-Sheet
 
-* Format for printing: `println!("Curly braces are where x is interpolated: {}", x);`
+* Format for printing: `println!("Curly braces are where x is interpolated: {}", x);`. The `!` indicates that this is a macro.
 
 * Fn parameters are declared with their types: `fn something(x: i32) { ...`, here for eg as an 32-bit integer.
 
@@ -266,4 +266,30 @@ Instead of copying the memory alloc. details to s2, Rust just makes s1 invalid a
     }
   }
 ```
-* Better still, change the func. sig. to `fn first_word(s: &str) -> &str {` so now it can accept both `String` & slices of strings. 
+* Better still, change the func. sig. to `fn first_word(s: &str) -> &str {` so now it can accept both `String` & slices of strings.
+
+* _Structs_ work just like in Solidity. Use dot-notation to get at the stuff inside. Can define structs as mutable in order to change things in them.
+
+* Logging a struct requires bringing the `Debug` into scope at the top via `#[derive(Debug)]` then using the `:?` operator:
+
+```rust
+  struct Rectangle {
+    width: u32,
+    height: u32
+  }
+
+  impl Rectangle {
+    fn area(&self) -> u32 {
+      self.width * self.height
+    }
+  }
+
+  fn main() {
+    let rec1 = Rectangle { width: 30, height: 50};
+    println!("rec1 is {:?}", rect1);
+  }
+```
+
+* Notice in the above the `impl`. This defines a method on our struct type. No we can define a Rectangle per ln 288, then calc. its area via `rect.area()`. Cool beans. Note that in C++, methods are called by either the dot operator: `thing.method()` or via an arrow `thing->method()`. The former is for calling a method on the object, and the latter when calling a method on the _pointer_ to an object, and you want to dereference it first. Rust has no such thing, since it use _automatic_ referencing & de-. Rust basically adds the required`&`, `&mut` & `*` to match the sig. method.
+
+* Methods can accept multiple parameters after the `&self` param. Can also define methods that _don't_ use self, they're just associated with the object. The ` impl` block can hold as many funcs. as you want.
