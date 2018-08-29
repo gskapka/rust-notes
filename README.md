@@ -275,7 +275,7 @@ Instead of copying the memory alloc. details to s2, Rust just makes s1 invalid a
 ```rust
   struct Rectangle {
     width: u32,
-    height: u32
+    height: u32,
   }
 
   impl Rectangle {
@@ -293,3 +293,140 @@ Instead of copying the memory alloc. details to s2, Rust just makes s1 invalid a
 * Notice in the above the `impl`. This defines a method on our struct type. No we can define a Rectangle per ln 288, then calc. its area via `rect.area()`. Cool beans. Note that in C++, methods are called by either the dot operator: `thing.method()` or via an arrow `thing->method()`. The former is for calling a method on the object, and the latter when calling a method on the _pointer_ to an object, and you want to dereference it first. Rust has no such thing, since it use _automatic_ referencing & de-. Rust basically adds the required`&`, `&mut` & `*` to match the sig. method.
 
 * Methods can accept multiple parameters after the `&self` param. Can also define methods that _don't_ use self, they're just associated with the object. The ` impl` block can hold as many funcs. as you want.
+
+* _ENUMS_ in Rust are apparently similar to the ADT's in Haskell. We'll see!
+
+```rust
+  fn main() {
+    enum IpAddrKind {
+      V4(String),           // So we've named a type (V4) & sepcified it's data type (String)
+      // V4(u8, u8, u8, u8) // Could also do something like this to save the IP4 type!
+      // V4(Ipv4Addr)       // Or here `Ipv4Addr` could itself be a struct!
+      V6(String),
+    }
+    let home = IpAddrKind::V4(String::from("127.0.0.1"));
+    let loopback  = IpAddrKind::V6(String::from("::1"));
+  }
+
+  fn route(it_type: IpKindAddr) {} // This can now accept both kinds of IP type.
+```
+
+* Enums can hold more data types more succinctly than structs: 
+
+```
+  enum Message {
+    Quit,
+    Move {x: i32, y: i32},
+    Write(String),
+    ChangeColor(i32, i32, i32),
+  }
+
+  // holds the same data as: 
+
+  struct QuitMessage; // unit struct
+  struct MoveMessage {
+    x: i32,
+    y: i32, // Note: these trailing commas are in all the docs - are they necessary?
+  }
+  struct WriteMessage(String) // tuple struct
+  struct ChangeColorMessage(i32,i32,i32); // tuple struct
+```
+
+* Like structs, enums can have methods defined on them: 
+
+```
+  impl Message {
+    fn call(&self) { // self gets the value that we call the method on
+      // ...do something...
+    }
+  }
+
+  let m = Message::Write(String::from("Hello"));
+  m.call();
+```
+
+* Rust does not have `null`s in it! Instead it uses type safety here called the `Option<T>` enum, which if you look closely is actually a `Maybe` monad!
+
+```
+  enum Option<T> {
+    Some(T);
+    None,
+  }
+```
+
+* Here, `<T>` is a generic type parameter, so `Some` can hold any type. We can place it into context:
+
+```
+  let y: Option<i8> = Some(5);
+  let absent_number: Option<i8> = None;
+```
+
+* Can't btw (obvs) add a `u8` to an `Option<u8>` because they are diff. types. Same as we can't add `5` to `Maybe.of(5)`. Has all the `Maybe` methods I'm used to, slightly diff. names of course (not all follow, see the [spec here](http://devdocs.io/rust/std/option/enum.option)):
+
+```
+  is_some(&self) -> bool
+  is_none(&self) -> bool
+  as_ref(&self) -> Option<&T>
+  as_mut(&mut self) -> Option<&mut T>
+  map<U, F>(self, f: F) -> Option<U>  // maps a function over the value durr :p
+  unwrap_or(self, def: T) -> T        // Caution: Eagerly evaluated
+  unwrap_or_else(self, f: F) -> T     // where F is a fn :: a -> T
+  // ...and a shit load more!
+``` 
+
+* _Match_ -> allows pattern matching. Patterns can be made of literals, var names, wildcards etc.
+
+```
+  fn main() {
+    enum Coin {
+      Penny,
+      Nickel,
+      Dime,
+      Quarter,
+    }
+    fn value_in_cents(coin: Coin) -> u32 {
+      match coin {
+        Coin::Penny => { // Can do cool lambdas!
+          println!("Lucky penny!");
+          1
+        }
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+      }
+    }
+  }
+```
+
+* So to use with our `Option<T>`:
+
+```
+  fn main() {
+    fn plus_one(x: OPtion<i32>) -> Option<i32> {
+      match x {
+        None => None,
+        Some(i) => Some(i + 1),
+        // Note: Patterns MUST be exhaustive, hence can use a placeholder per below:
+        // _ => (),
+      }
+    }
+    let five = Some(5);
+    let six = plus_one(five);
+    let none - plus_one(None);
+  }
+```
+
+* `If...let` control flow. Less verbose than above to handle values that match one pattern but ignore the rest (like say if in above you'd ignored the `None` by using `_ => (), `, instead you could use the `if...let` sugar: 
+
+```
+  fn main() {
+    let some_u8 = some(0u8);
+    if let Some(3) = some_u8_value {
+      println!("Three");
+    }
+  }
+```
+
+* _Modules_: can be public or priv. `mod` declares a new module. Private by default. `pub` make them public and visible outside of their namespace. `use` brings modules or the definitions inside modules into scope so it's easier to use them. Using `mod` forces a file structure. Rust will first look to `./lib.rs` for modules. Any defined there in can be brought out in their own files, which can have further mods which needs another folder which can have further files etc. Read into!
+
+
