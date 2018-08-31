@@ -471,4 +471,37 @@ Instead of copying the memory alloc. details to s2, Rust just makes s1 invalid a
   let s = format!("{} {} {}", s3,s4,s5); // => Yes please! Thank you! Note: the string interpolation is adding spaces here!
 ```
 
-*
+* String is a wrapper of `Vec<u8>` and so we can't access strings like arrays in Javascript. Can slice from strings but caution required as not all chars are two bytes long and the prog will panic at runtime if you slice mid char. Instead, it has an inbuilt `chars` method: `for c in "I think ∴ I am".chars() {}` or if you need the bytes: `for b in "I think ∴ I am".bytes() {}`
+
+* _Hash maps_ are used to store JS style objects. Data is stored on the heap.
+
+```rust
+  fn main() {
+    use std::collections::HashMap;
+    let mut hMap - HashMap::new()
+    hMap.insert(String::from("Key1"), 1);
+    hMap.insert(String::from("Key2"), 2); 
+    }
+```
+
+* If strings are created as vars to be used in the hash map, adding to the map will transfer their ownership so they'll no longer be accessible from the orig. vars. If you need to, you can insert references in the hmap instead, but you need to take care that the lifetime of the vars matches that of the map.
+
+* Get a value out of a hmap using `hashmap.get(&key);` or `hashmap.get(String::from("key"));`
+
+* Loop over a hash map via: `for (k,v) in &hashmap {println!("Key: {}, value: {}", k,v)}`
+
+* The `insert` hashmap method overwrites keys. Use `hashmap.entry(&keyStr).or_insert(something_else);` if you only want to write to a key if it doesn't exist already.
+
+```rust
+  fn main() {
+    use std::collections::HashMap;
+    let text = "hello world wonderful world";
+    let mut hmap = HashMap::new();
+    for word in text.split_whitespace() {
+      let count = hmap.entry(word).or_insert(0); // Uses existing value, else sets it to 0
+      *count += 1;
+    }
+    println!("{:?}", hmap)
+    // {"world": 2, "hello": 1, "wonderful": 1}
+  }
+```
