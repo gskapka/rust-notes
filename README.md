@@ -429,4 +429,46 @@ Instead of copying the memory alloc. details to s2, Rust just makes s1 invalid a
 
 * _Modules_: can be public or priv. `mod` declares a new module. Private by default. `pub` make them public and visible outside of their namespace. `use` brings modules or the definitions inside modules into scope so it's easier to use them. Using `mod` forces a file structure. Rust will first look to `./lib.rs` for modules. Any defined there in can be brought out in their own files, which can have further mods which needs another folder which can have further files etc. Read into!
 
+* _Vectors_: like arrays. Can define them as a generic type: `Vec<T>` or a specific one: `Vec<u32>`. Create an empty one via: `Vec::new()` or instantiate with things in via the vec macro: `let v = vec![1,2,3,4,5]`. Can push into vecs: `v.push(6)`. Two ways to get at stuff inside one:
 
+```rust
+  let vec![1,2,3,4,5]
+  let a: &i32 = &v[2];            // Will panic if accessing index out of the arr.
+  let b: Option<&i32> = v.get(2); // Now we're null safe thanks to Maybe!
+```
+
+* Can do a `for i in &v {}` loop to access all vars, and can make mutable if we need to change them via: `for i in &mut v {}`.
+
+* Note that vectors can only store things of the same type. To get around this we can use an enum holding _different_ types, and store parts of _that_ in a vector, to essentially achieve storing of different types in a vector:
+
+```rust
+  enum SpreadsheetCell {
+    Int (i32),
+    Float(f64),
+    Text(String),
+  }
+
+  let row = vec![
+    SpreadsheetCell::Int(3),
+    SpreadsheetCell::Float(10.12),
+    SpreadsheetCell::String(String::from("Yo")),
+  ];
+```
+
+* _Strings_ again. Can create via `let s = String::from("String here");` or `let s = "String here".to_string();`. Can concat via pushing, using `+` or using `format`:
+
+```rust
+  let &mut s = String::from("Hello");
+  s.push_str(" buddy ");
+
+  let s1 = String::from("Yes");
+  let s2 = String::from(" please!");
+  let s3 = s1 + &s2 // Note: s1 now out of scope! Also note the reference to s2.
+
+  let s4 = String::from("Thank");
+  let s5 = String::from("you!");
+  
+  let s = format!("{} {} {}", s3,s4,s5); // => Yes please! Thank you! Note: the string interpolation is adding spaces here!
+```
+
+*
